@@ -1,91 +1,37 @@
 ---
-author: Sat Naing
+author: RNZ
 pubDatetime: 2023-01-30T15:57:52.737Z
-title: AstroPaper 2.0
-slug: astro-paper-2
-featured: false
+title: "Embracing Change: My Journey after Quitting My Job"
+slug: journey-after-quitting-job
+featured: true
 ogImage: https://user-images.githubusercontent.com/53733092/215771435-25408246-2309-4f8b-a781-1f3d93bdf0ec.png
 tags:
   - release
-description: AstroPaper with the enhancements of Astro v2. Type-safe markdown contents, bug fixes and better dev experience etc.
+description: In life, there comes a time when we must make difficult decisions that challenge our comfort zones.
 ---
 
-Astro 2.0 has been released with some cool features, breaking changes, DX improvements, better error overlay and so on. AstroPaper takes advantage of those cool features, especially Content Collections API.
+Title: E
 
-<!-- ![Introducing AstroPaper 2.0](https://user-images.githubusercontent.com/53733092/215683840-dc2502f5-8c5a-44f0-a26c-4e7180455056.png) -->
+Introduction:
+In life, there comes a time when we must make difficult decisions that challenge our comfort zones. For me, that moment arrived when I made the bold choice to quit my job as an engineer at a telecom company. Little did I know that this decision would lead me on a path of self-discovery, creativity, and ultimately, a newfound sense of fulfillment. In this blog post, I want to share my thoughts and experiences as I ventured into the unknown, embracing my passions and pursuing a life beyond the confines of a traditional job.
 
-![Introducing AstroPaper 2.0](https://user-images.githubusercontent.com/53733092/215771435-25408246-2309-4f8b-a781-1f3d93bdf0ec.png)
+The Initial Reaction:
+As soon as news spread about my departure from the corporate world, I was met with a mix of curiosity and concern from friends, family, and acquaintances. The most common question I faced was, "What will you do now? How will you make a living?" Initially, these inquiries made me question my decision, but deep down, I knew that I had made the right choice for myself.
 
-## Table of contents
+Finding Purpose in Chores:
+Without the structure of a 9-to-5 job, I realized that I needed to find a sense of purpose in my daily routine. Instead of wallowing in the uncertainty, I turned my attention to the tasks that often went neglected while I was working. I focused on my household chores, taking satisfaction in the clean, organized environment I created. By devoting time and effort to these everyday tasks, I found a sense of accomplishment and contentment that I had never experienced before.
 
-## Features & Changes
+Embracing My Passions:
+With newfound free time, I delved into the hobbies and interests that had always captivated me. From a young age, I had been fascinated by web development, car diagnostics, and computer technology. Instead of relegating these passions to mere hobbies, I decided to turn them into something more meaningful.
 
-### Type-safe Frontmatters and Redefined Blog Schema
+Creating Websites:
+Using my knowledge of web development, I began creating websites for individuals and small businesses. It was exhilarating to see my clients' visions come to life, and the positive feedback I received fueled my motivation. Through this venture, I not only sharpened my skills but also gained insight into the power of digital presence and the impact it can have on businesses.
 
-Frontmatter of AstroPaper 2.0 markdown contents are now type-safe thanks to Astro’s Content Collections. Blog schema is defined inside the `src/content/_schemas.ts` file.
+Exploring Car Diagnostics:
+Another area of interest that I delved into was car diagnostics. By combining my love for cars and technology, I started offering diagnostic services to friends and local car enthusiasts. Being able to troubleshoot and fix issues brought me a sense of fulfillment and allowed me to connect with like-minded individuals who shared my passion.
 
-### New Home for Blog contents
+Following My Childhood Dreams:
+In the midst of this journey, I realized that what I was doing was not merely a means to make a living but a way to reconnect with my childhood dreams. As a child, I was always captivated by the world of technology and computers. By pursuing my passions, I was able to recapture the enthusiasm and curiosity I had as a child, reigniting the joy that had been overshadowed by the demands of a traditional job.
 
-All the blog posts were moved from `src/contents` to `src/content/blog` directory.
-
-### New Fetch API
-
-Contents are now fetched with `getCollection` function. No relative path to the content needs to be specified anymore.
-
-```ts
-// old content fetching method
-- const postImportResult = import.meta.glob<MarkdownInstance<Frontmatter>>(
-  "../contents/**/**/*.md",);
-
-// new content fetching method
-+ const postImportResult = await getCollection("blog");
-```
-
-### Modified Search Logic for better Search Result
-
-In the older version of AstroPaper, when someone search some article, the search criteria keys that will be searched are `title`, `description` and `headings` (heading means all the headings h1 ~ h6 of the blog post). In AstroPaper v2, only `title` and `description` will be searched as the user types.
-
-### Renamed Frontmatter Properties
-
-The following frontmatter properties are renamed.
-
-| Old Names | New Names   |
-| --------- | ----------- |
-| datetime  | pubDatetime |
-| slug      | postSlug    |
-
-### Default Tag for blog post
-
-If a blog post doesn't have any tag (in other words, frontmatter property `tags` is not specified), the default tag `others` will be used for that blog post. But you can set the default tag in the `/src/content/_schemas.ts` file.
-
-```ts
-// src/contents/_schemas.ts
-export const blogSchema = z.object({
-  // ---
-  // replace "others" with whatever you want
-  tags: z.array(z.string()).default(["others"]),
-  ogImage: z.string().optional(),
-  description: z.string(),
-});
-```
-
-### New Predefined Dark Color Scheme
-
-AstroPaper v2 has a new dark color scheme (high contrast & low contrast) which is based on Astro's dark logo. Check out [this link](https://astro-paper.pages.dev/posts/predefined-color-schemes#astro-dark) for more info.
-
-![New Predefined Dark Color Scheme](https://user-images.githubusercontent.com/53733092/215680520-59427bb0-f4cb-48c0-bccc-f182a428d72d.svg)
-
-### Automatic Class Sorting
-
-AstroPaper 2.0 includes automatic class sorting with [TailwindCSS Prettier plugin](https://tailwindcss.com/blog/automatic-class-sorting-with-prettier)
-
-### Updated Docs & README
-
-All the [#docs](https://astro-paper.pages.dev/tags/docs/) blog posts and [README](https://github.com/satnaing/astro-paper#readme) are updated for this AstroPaper v2.
-
-## Bug Fixes
-
-- fix broken tags in the Blog Post page
-- in a tag page, the last part of the breadcrumb is now updated to lower-case for consistency
-- exclude draft posts in a tag page
-- fix 'onChange value not updating issue' after a page reload
+Conclusion:
+Quitting my job as an engineer was undoubtedly a leap of faith, but it was a decision that led me to discover a world of possibilities. By embracing change and following my passions, I found purpose, fulfillment, and a renewed sense of self. My journey serves as a reminder that sometimes, the road less traveled can lead us to the most extraordinary destinations. So, to all those who have questioned my decision, I can confidently say that I am living a life that truly reflects who I am, and I couldn't be happier.

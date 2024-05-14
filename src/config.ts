@@ -4,7 +4,7 @@ export const SITE: Site = {
   website: "https://rnzblog.netlify.app", // replace this with your deployed domain
   author: "RNZ",
   desc: "A minimal, responsive and SEO-friendly  blog.",
-  title: "RNZ Blog",
+  title: "RNZ",
   ogImage: "astropaper-og.jpg",
   lightAndDarkMode: true,
   postPerPage: 3,
