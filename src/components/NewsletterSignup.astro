@@ -1,0 +1,90 @@
+---
+// Newsletter signup with multiple provider support
+interface Props {
+  provider?: 'mailchimp' | 'convertkit' | 'buttondown';
+  inline?: boolean;
+}
+
+const { provider = 'convertkit', inline = false } = Astro.props;
+
+// Configuration for different providers
+const providers = {
+  mailchimp: {
+    action: 'https://your-domain.us1.list-manage.com/subscribe/post?u=YOUR_USER_ID&id=YOUR_LIST_ID',
+    hiddenFields: '<input type="hidden" name="b_YOUR_USER_ID_YOUR_LIST_ID" tabindex="-1" value="">'
+  },
+  convertkit: {
+    action: 'https://app.convertkit.com/forms/YOUR_FORM_ID/subscriptions',
+    hiddenFields: ''
+  },
+  buttondown: {
+    action: 'https://buttondown.email/api/emails/embed-subscribe/YOUR_USERNAME',
+    hiddenFields: '<input type="hidden" value="1" name="embed">'
+  }
+};
+
+const config = providers[provider];
+---
+
+<div class={`newsletter-signup ${inline ? 'inline' : 'modal'}`}>
+  <form 
+    action={config.action}
+    method="post"
+    target="_blank"
+    class="newsletter-form"
+    id="newsletter-form"
+  >
+    <Fragment set:html={config.hiddenFields} />
+    
+    <div class="flex flex-col sm:flex-row gap-3">
+      <input 
+        type="email" 
+        name="email"
+        placeholder="Enter your email"
+        required
+        class="flex-1 px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
+      />
+      <button 
+        type="submit"
+        class="group bg-gradient-to-r from-primary-600 to-accent-600 text-white px-6 py-3 rounded-xl font-semibold hover:shadow-lg hover:scale-105 transition-all duration-300 flex items-center justify-center"
+      >
+        Subscribe
+        <svg class="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+        </svg>
+      </button>
+    </div>
+    
+    <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">
+      No spam, unsubscribe anytime. We respect your privacy. ✨
+    </p>
+  </form>
+</div>
+
+<script>
+  document.getElementById('newsletter-form')?.addEventListener('submit', function(e) {
+    // Track newsletter signup
+    if (typeof (window as any).trackEvent === 'function') {
+      (window as any).trackEvent('newsletter_signup', {
+        provider: 'convertkit',
+        location: window.location.pathname
+      });
+    }
+    
+    // Show success message (you can customize this)
+    setTimeout(() => {
+      const form = e.target as HTMLFormElement;
+      const button = form.querySelector('button[type="submit"]') as HTMLButtonElement;
+      if (button) {
+        const originalText = button.innerHTML;
+        button.innerHTML = '✓ Subscribed!';
+        button.disabled = true;
+        
+        setTimeout(() => {
+          button.innerHTML = originalText;
+          button.disabled = false;
+        }, 3000);
+      }
+    }, 1000);
+  });
+</script>

@@ -1,0 +1,105 @@
+---
+// Touch gestures for mobile navigation
+---
+
+<script>
+  class TouchGestures {
+    private startX = 0;
+    private startY = 0;
+    private threshold = 50;
+    
+    constructor() {
+      this.init();
+    }
+    
+    init() {
+      document.addEventListener('touchstart', this.handleTouchStart.bind(this), { passive: true });
+      document.addEventListener('touchend', this.handleTouchEnd.bind(this), { passive: true });
+    }
+    
+    handleTouchStart(e: TouchEvent) {
+      this.startX = e.touches[0].clientX;
+      this.startY = e.touches[0].clientY;
+    }
+    
+    handleTouchEnd(e: TouchEvent) {
+      if (!this.startX || !this.startY) return;
+      
+      const endX = e.changedTouches[0].clientX;
+      const endY = e.changedTouches[0].clientY;
+      
+      const diffX = this.startX - endX;
+      const diffY = this.startY - endY;
+      
+      // Horizontal swipe
+      if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > this.threshold) {
+        if (diffX > 0) {
+          this.handleSwipeLeft();
+        } else {
+          this.handleSwipeRight();
+        }
+      }
+      
+      // Vertical swipe
+      if (Math.abs(diffY) > Math.abs(diffX) && Math.abs(diffY) > this.threshold) {
+        if (diffY > 0) {
+          this.handleSwipeUp();
+        } else {
+          this.handleSwipeDown();
+        }
+      }
+      
+      this.startX = 0;
+      this.startY = 0;
+    }
+    
+    handleSwipeLeft() {
+      // Navigate to next post if on blog post page
+      const nextLink = document.querySelector('a[rel="next"]') as HTMLAnchorElement;
+      if (nextLink) {
+        window.location.href = nextLink.href;
+      }
+    }
+    
+    handleSwipeRight() {
+      // Navigate to previous post if on blog post page
+      const prevLink = document.querySelector('a[rel="prev"]') as HTMLAnchorElement;
+      if (prevLink) {
+        window.location.href = prevLink.href;
+      } else {
+        // Go back in history
+        window.history.back();
+      }
+    }
+    
+    handleSwipeUp() {
+      // Scroll to top
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    
+    handleSwipeDown() {
+      // Pull to refresh (if at top of page)
+      if (window.scrollY === 0) {
+        this.pullToRefresh();
+      }
+    }
+    
+    pullToRefresh() {
+      // Show refresh indicator
+      const refreshIndicator = document.createElement('div');
+      refreshIndicator.className = 'fixed top-20 left-1/2 transform -translate-x-1/2 bg-primary-600 text-white px-4 py-2 rounded-full text-sm font-medium z-50 animate-bounce';
+      refreshIndicator.textContent = 'Refreshing...';
+      document.body.appendChild(refreshIndicator);
+      
+      // Refresh page after animation
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
+    }
+  }
+  
+  // Initialize touch gestures on mobile devices
+  if ('ontouchstart' in window) {
+    new TouchGestures();
+  }
+</script>

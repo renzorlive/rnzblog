@@ -1,0 +1,62 @@
+---
+import { getCollection } from 'astro:content';
+import BlogCard from './BlogCard.astro';
+
+interface Props {
+  currentSlug: string;
+  category: string;
+  tags: string[];
+}
+
+const { currentSlug, category, tags } = Astro.props;
+
+// Get all posts except current
+const allPosts = await getCollection('blog');
+const otherPosts = allPosts.filter(post => post.slug !== currentSlug);
+
+// Calculate relevance score
+function calculateRelevance(post: any) {
+  let score = 0;
+  
+  // Same category gets high score
+  if (post.data.category === category) score += 10;
+  
+  // Shared tags get points
+  const sharedTags = post.data.tags.filter((tag: string) => tags.includes(tag));
+  score += sharedTags.length * 3;
+  
+  // Recent posts get slight boost
+  const daysSincePublished = (Date.now() - post.data.pubDate.getTime()) / (1000 * 60 * 60 * 24);
+  if (daysSincePublished < 30) score += 2;
+  if (daysSincePublished < 7) score += 1;
+  
+  return score;
+}
+
+// Get top 3 related posts
+const relatedPosts = otherPosts
+  .map(post => ({ post, score: calculateRelevance(post) }))
+  .filter(item => item.score > 0)
+  .sort((a, b) => b.score - a.score)
+  .slice(0, 3)
+  .map(item => item.post);
+---
+
+{relatedPosts.length > 0 && (
+  <section class="mt-16 pt-12 border-t border-gray-200 dark:border-gray-700">
+    <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-8 text-center">Related Posts</h2>
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {relatedPosts.map(post => (
+        <BlogCard
+          title={post.data.title}
+          description={post.data.description}
+          pubDate={post.data.pubDate}
+          heroImage={post.data.heroImage}
+          category={post.data.category}
+          tags={post.data.tags}
+          slug={post.slug}
+        />
+      ))}
+    </div>
+  </section>
+)}

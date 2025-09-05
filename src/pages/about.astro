@@ -1,0 +1,166 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Navigation from '../components/Navigation.astro';
+import ThemeToggle from '../components/ThemeToggle.astro';
+import ReadingProgress from '../components/ReadingProgress.astro';
+---
+
+<BaseLayout 
+  title="About - RNZ Blog"
+  description="Learn about the person behind RNZ Blog - a developer, automotive enthusiast, and parent sharing insights on programming, tech, cars, and family life."
+>
+  <Navigation />
+  <ThemeToggle />
+  <ReadingProgress />
+  
+  <main class="pt-24 mt-8 bg-white dark:bg-gray-900 transition-colors duration-300">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <!-- Hero Section -->
+      <div class="text-center mb-12">
+        <div class="w-32 h-32 bg-gradient-to-br from-primary-500 to-accent-500 rounded-full mx-auto mb-6 flex items-center justify-center text-white text-4xl font-bold shadow-xl">
+          RNZ
+        </div>
+        <h1 class="text-4xl font-bold text-gray-900 dark:text-gray-100 mb-4">Hi, I'm RNZ</h1>
+        <p class="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+          Developer, automotive enthusiast, and parent navigating the intersection of technology and family life.
+        </p>
+      </div>
+
+      <!-- Main Content -->
+      <div class="prose prose-lg max-w-none">
+        <div class="grid md:grid-cols-2 gap-12 mb-12">
+          <div>
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">My Story</h2>
+            <p class="text-gray-600 dark:text-gray-300 mb-4">
+              Welcome to my corner of the internet! I'm a passionate developer who loves exploring the latest in programming, 
+              automotive technology, and networking. When I'm not coding or tinkering with cars, I'm probably chasing around 
+              my energetic 2-year-old or planning our next family adventure.
+            </p>
+            <p class="text-gray-600 dark:text-gray-300 mb-4">
+              This blog is where I share my experiences, insights, and lessons learned across these diverse but interconnected 
+              areas of my life. From debugging complex code to understanding the latest EV technology, from setting up home 
+              networks to surviving toddler tantrums—it's all here.
+            </p>
+          </div>
+          
+          <div>
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">What I Write About</h2>
+            <div class="space-y-4">
+              <div class="flex items-start gap-3">
+                <div class="text-2xl">💻</div>
+                <div>
+                  <h3 class="font-semibold text-gray-900 dark:text-gray-100">Programming</h3>
+                  <p class="text-gray-600 dark:text-gray-300 text-sm">Web development, best practices, tutorials, and the latest frameworks</p>
+                </div>
+              </div>
+              
+              <div class="flex items-start gap-3">
+                <div class="text-2xl">🚗</div>
+                <div>
+                  <h3 class="font-semibold text-gray-900 dark:text-gray-100">Automotive Technology</h3>
+                  <p class="text-gray-600 dark:text-gray-300 text-sm">Electric vehicles, car tech, industry trends, and hands-on reviews</p>
+                </div>
+              </div>
+              
+              <div class="flex items-start gap-3">
+                <div class="text-2xl">🌐</div>
+                <div>
+                  <h3 class="font-semibold text-gray-900 dark:text-gray-100">Networking & IT</h3>
+                  <p class="text-gray-600 dark:text-gray-300 text-sm">Home lab setups, network configurations, and IT infrastructure</p>
+                </div>
+              </div>
+              
+              <div class="flex items-start gap-3">
+                <div class="text-2xl">👨👩👧👦</div>
+                <div>
+                  <h3 class="font-semibold text-gray-900 dark:text-gray-100">Family Life</h3>
+                  <p class="text-gray-600 dark:text-gray-300 text-sm">Parenting adventures, toddler tips, and balancing work with family</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Skills & Interests -->
+        <div class="bg-gray-50 dark:bg-gray-800/50 rounded-2xl p-8 mb-12">
+          <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6 text-center">Skills & Interests</h2>
+          <div class="grid md:grid-cols-3 gap-8">
+            <div>
+              <h3 class="font-semibold text-gray-900 dark:text-gray-100 mb-3">Programming</h3>
+              <ul class="text-gray-600 dark:text-gray-300 space-y-1 text-sm">
+                <li>JavaScript/TypeScript</li>
+                <li>React & Astro</li>
+                <li>Node.js</li>
+                <li>Python</li>
+                <li>Web APIs</li>
+              </ul>
+            </div>
+            
+            <div>
+              <h3 class="font-semibold text-gray-900 dark:text-gray-100 mb-3">Technology</h3>
+              <ul class="text-gray-600 dark:text-gray-300 space-y-1 text-sm">
+                <li>Cloud Infrastructure</li>
+                <li>Network Security</li>
+                <li>Home Automation</li>
+                <li>IoT Devices</li>
+                <li>System Administration</li>
+              </ul>
+            </div>
+            
+            <div>
+              <h3 class="font-semibold text-gray-900 dark:text-gray-100 mb-3">Automotive</h3>
+              <ul class="text-gray-600 dark:text-gray-300 space-y-1 text-sm">
+                <li>Electric Vehicles</li>
+                <li>Automotive Electronics</li>
+                <li>Performance Tuning</li>
+                <li>Diagnostic Tools</li>
+                <li>Industry Analysis</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- Personal Touch -->
+        <div class="text-center mb-12">
+          <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">Beyond the Code</h2>
+          <p class="text-gray-600 dark:text-gray-300 mb-6 max-w-2xl mx-auto">
+            When I'm not writing code or blog posts, you'll find me spending quality time with my family, 
+            exploring new places (usually with a very opinionated 2-year-old navigator), or working on 
+            various tech projects around the house.
+          </p>
+          <p class="text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+            I believe that technology should make our lives better, cars should be both fun and efficient, 
+            and that there's always something new to learn—whether it's a programming language, 
+            a parenting technique, or how to install a car seat correctly on the first try.
+          </p>
+        </div>
+
+        <!-- Connect Section -->
+        <div class="bg-primary-50 dark:bg-primary-900/20 rounded-2xl p-8 text-center">
+          <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">Let's Connect</h2>
+          <p class="text-gray-600 dark:text-gray-300 mb-6">
+            I love connecting with fellow developers, automotive enthusiasts, and parents. 
+            Feel free to reach out if you want to discuss technology, share parenting tips, 
+            or just say hello!
+          </p>
+          
+          <div class="flex justify-center gap-4 mb-6">
+            <a href="#" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-xl transition-colors">
+              Twitter
+            </a>
+            <a href="#" class="bg-blue-700 hover:bg-blue-800 text-white px-4 py-2 rounded-xl transition-colors">
+              LinkedIn
+            </a>
+            <a href="#" class="bg-gray-800 dark:bg-gray-700 hover:bg-gray-900 dark:hover:bg-gray-600 text-white px-4 py-2 rounded-xl transition-colors">
+              GitHub
+            </a>
+          </div>
+          
+          <p class="text-sm text-gray-500 dark:text-gray-400">
+            Or subscribe to my newsletter to get the latest posts delivered to your inbox.
+          </p>
+        </div>
+      </div>
+    </div>
+  </main>
+</BaseLayout>

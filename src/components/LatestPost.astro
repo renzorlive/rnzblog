@@ -1,0 +1,89 @@
+---
+import { getCollection } from 'astro:content';
+
+// Get the latest blog post
+const allPosts = await getCollection('blog');
+const latestPost = allPosts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())[0];
+
+const categoryColors = {
+  programming: 'bg-blue-100 dark:bg-blue-900/70 text-blue-800 dark:text-blue-200',
+  automotive: 'bg-red-100 dark:bg-red-900/70 text-red-800 dark:text-red-200',
+  networking: 'bg-green-100 dark:bg-green-900/70 text-green-800 dark:text-green-200',
+  tech: 'bg-purple-100 dark:bg-purple-900/70 text-purple-800 dark:text-purple-200',
+  family: 'bg-pink-100 dark:bg-pink-900/70 text-pink-800 dark:text-pink-200'
+};
+
+const formatDate = (date: Date) => {
+  return date.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  });
+};
+---
+
+{latestPost && (
+  <section class="py-12 relative overflow-hidden">
+    <div class="absolute inset-0 bg-gradient-to-br from-primary-500/10 via-accent-500/5 to-primary-600/10 dark:from-primary-400/20 dark:via-accent-400/10 dark:to-primary-500/20"></div>
+    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-8 animate-fade-in">
+        <h1 class="text-3xl md:text-4xl font-display font-bold text-gray-900 dark:text-gray-100 mb-2">Latest Post</h1>
+        <p class="text-lg text-gray-600 dark:text-gray-300">Fresh insights and discoveries</p>
+      </div>
+      
+      <article class="group bg-white/80 dark:bg-gray-800/90 backdrop-blur-sm rounded-3xl shadow-glass border border-white/20 dark:border-gray-600/30 overflow-hidden hover:shadow-glow hover:scale-[1.02] transition-all duration-500 max-w-4xl mx-auto animate-slide-up">
+        {latestPost.data.heroImage && (
+          <div class="aspect-[2/1] overflow-hidden relative">
+            <img 
+              src={latestPost.data.heroImage} 
+              alt={latestPost.data.title}
+              class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+            />
+            <div class="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+          </div>
+        )}
+        
+        <div class="p-8 md:p-12">
+          <div class="flex items-center gap-4 mb-6">
+            <span class={`inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold ${categoryColors[latestPost.data.category as keyof typeof categoryColors]}`}>
+              {latestPost.data.category}
+            </span>
+            <time class="text-gray-500 dark:text-gray-400 font-medium" datetime={latestPost.data.pubDate.toISOString()}>
+              {formatDate(latestPost.data.pubDate)}
+            </time>
+          </div>
+          
+          <h2 class="text-3xl md:text-4xl font-display font-bold text-gray-900 dark:text-gray-100 mb-6 leading-tight">
+            <a href={`/blog/${latestPost.slug}`} class="hover:text-primary-600 dark:hover:text-primary-400 transition-colors duration-200">
+              {latestPost.data.title}
+            </a>
+          </h2>
+          
+          <p class="text-xl text-gray-600 dark:text-gray-300 mb-8 leading-relaxed">
+            {latestPost.data.description}
+          </p>
+          
+          {latestPost.data.tags.length > 0 && (
+            <div class="flex flex-wrap gap-2 mb-8">
+              {latestPost.data.tags.slice(0, 4).map(tag => (
+                <span class="inline-block bg-surface-100/80 dark:bg-gray-700/60 text-gray-700 dark:text-gray-300 text-sm px-3 py-1 rounded-full border border-gray-200/50 dark:border-gray-600/50">
+                  #{tag}
+                </span>
+              ))}
+            </div>
+          )}
+          
+          <a 
+            href={`/blog/${latestPost.slug}`}
+            class="group inline-flex items-center bg-gradient-to-r from-primary-600 to-primary-700 text-white px-8 py-4 rounded-2xl font-semibold hover:shadow-glow hover:scale-105 transition-all duration-300"
+          >
+            Read Full Article
+            <svg class="ml-3 h-5 w-5 group-hover:translate-x-1 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+            </svg>
+          </a>
+        </div>
+      </article>
+    </div>
+  </section>
+)}

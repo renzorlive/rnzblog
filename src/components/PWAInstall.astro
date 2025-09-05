@@ -1,0 +1,92 @@
+---
+// PWA install prompt
+---
+
+<div id="pwa-install" class="fixed bottom-6 left-6 z-40 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-2xl shadow-glass border border-white/20 dark:border-gray-600/30 p-4 max-w-sm opacity-0 invisible transition-all duration-300">
+  <div class="flex items-start gap-3">
+    <div class="w-10 h-10 bg-gradient-to-br from-primary-500 to-accent-500 rounded-lg flex items-center justify-center text-white text-sm font-bold flex-shrink-0">
+      R
+    </div>
+    <div class="flex-1">
+      <h3 class="font-semibold text-gray-900 dark:text-gray-100 text-sm mb-1">Install RNZ Blog</h3>
+      <p class="text-xs text-gray-600 dark:text-gray-400 mb-3">Get the app for a better reading experience</p>
+      <div class="flex gap-2">
+        <button id="pwa-install-btn" class="bg-primary-600 hover:bg-primary-700 text-white px-3 py-1 rounded-lg text-xs font-medium transition-colors">
+          Install
+        </button>
+        <button id="pwa-dismiss" class="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 px-3 py-1 text-xs transition-colors">
+          Later
+        </button>
+      </div>
+    </div>
+    <button id="pwa-close" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+      </svg>
+    </button>
+  </div>
+</div>
+
+<script>
+  let deferredPrompt: any = null;
+  const installPrompt = document.getElementById('pwa-install');
+  const installBtn = document.getElementById('pwa-install-btn');
+  const dismissBtn = document.getElementById('pwa-dismiss');
+  const closeBtn = document.getElementById('pwa-close');
+  
+  // Listen for beforeinstallprompt event
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    
+    // Show install prompt after 3 seconds if not dismissed
+    setTimeout(() => {
+      if (!localStorage.getItem('pwa-dismissed')) {
+        showInstallPrompt();
+      }
+    }, 3000);
+  });
+  
+  function showInstallPrompt() {
+    installPrompt?.classList.remove('opacity-0', 'invisible');
+    installPrompt?.classList.add('opacity-100', 'visible');
+  }
+  
+  function hideInstallPrompt() {
+    installPrompt?.classList.add('opacity-0', 'invisible');
+    installPrompt?.classList.remove('opacity-100', 'visible');
+  }
+  
+  // Install app
+  installBtn?.addEventListener('click', async () => {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      
+      if (outcome === 'accepted') {
+        console.log('PWA installed');
+      }
+      
+      deferredPrompt = null;
+      hideInstallPrompt();
+    }
+  });
+  
+  // Dismiss for session
+  dismissBtn?.addEventListener('click', () => {
+    hideInstallPrompt();
+    localStorage.setItem('pwa-dismissed', 'true');
+  });
+  
+  // Close permanently
+  closeBtn?.addEventListener('click', () => {
+    hideInstallPrompt();
+    localStorage.setItem('pwa-dismissed', 'permanent');
+  });
+  
+  // Check if already installed
+  window.addEventListener('appinstalled', () => {
+    hideInstallPrompt();
+    localStorage.setItem('pwa-dismissed', 'permanent');
+  });
+</script>

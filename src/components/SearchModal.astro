@@ -1,0 +1,195 @@
+---
+// Modern search modal with instant results
+---
+
+<div id="search-modal" class="fixed inset-0 z-50 hidden">
+  <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" id="search-backdrop"></div>
+  <div class="relative min-h-screen flex items-start justify-center p-4 pt-20">
+    <div class="bg-white/90 dark:bg-gray-900/90 backdrop-blur-md rounded-3xl shadow-2xl border border-white/20 dark:border-gray-700/20 w-full max-w-2xl animate-slide-up">
+      <div class="p-6">
+        <div class="flex items-center gap-4 mb-6">
+          <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+          </svg>
+          <input 
+            type="text" 
+            id="search-input"
+            placeholder="Search posts, categories, tags..."
+            class="flex-1 bg-transparent text-xl text-gray-900 dark:text-white placeholder-gray-500 border-0 focus:ring-0 outline-none"
+            autocomplete="off"
+          />
+          <button id="search-close" class="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl transition-colors">
+            <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+          </button>
+        </div>
+        
+        <div id="search-results" class="space-y-3 max-h-96 overflow-y-auto">
+          <div class="text-center py-8 text-gray-500">
+            <svg class="w-12 h-12 mx-auto mb-3 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+            </svg>
+            <p>Start typing to search posts...</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const searchModal = document.getElementById('search-modal');
+  const searchInput = document.getElementById('search-input');
+  const searchResults = document.getElementById('search-results');
+  const searchClose = document.getElementById('search-close');
+  const searchBackdrop = document.getElementById('search-backdrop');
+  
+  let posts: any[] = [];
+  let fuse: any = null;
+  
+  // Load posts data and initialize Fuse.js
+  async function loadPosts() {
+    try {
+      // Load Fuse.js
+      const { default: Fuse } = await import('fuse.js');
+      
+      // This would typically come from an API or be pre-loaded
+      posts = [
+        {
+          title: "Getting Started with Astro: A Modern Static Site Generator",
+          description: "Learn how to build fast, modern websites with Astro. This comprehensive guide covers setup, components, and best practices for web development.",
+          slug: "getting-started-with-astro",
+          category: "programming",
+          tags: ["astro", "javascript", "web-development", "static-sites"]
+        },
+        {
+          title: "The Future of Electric Vehicle Charging Infrastructure", 
+          description: "Exploring the rapid evolution of EV charging networks, from home charging solutions to ultra-fast highway stations, and what it means for automotive adoption.",
+          slug: "electric-vehicle-charging-infrastructure",
+          category: "automotive",
+          tags: ["electric-vehicles", "charging", "infrastructure", "sustainability"]
+        },
+        {
+          title: "Surviving Long Car Trips with a 2-Year-Old: A Parent's Guide",
+          description: "Practical tips and strategies for making road trips enjoyable (or at least bearable) when traveling with toddlers. Real experiences from a parent who's been there.",
+          slug: "toddler-travel-tips", 
+          category: "family",
+          tags: ["parenting", "travel", "toddler", "family-time", "road-trips"]
+        }
+      ];
+      
+      // Initialize Fuse.js with advanced search options
+      const fuseOptions = {
+        keys: [
+          { name: 'title', weight: 0.4 },
+          { name: 'description', weight: 0.3 },
+          { name: 'category', weight: 0.2 },
+          { name: 'tags', weight: 0.1 }
+        ],
+        threshold: 0.3,
+        includeScore: true,
+        includeMatches: true
+      };
+      
+      fuse = new Fuse(posts, fuseOptions);
+    } catch (error) {
+      console.error('Failed to load posts:', error);
+    }
+  }
+  
+  function openSearch() {
+    searchModal?.classList.remove('hidden');
+    searchInput?.focus();
+    document.body.style.overflow = 'hidden';
+  }
+  
+  function closeSearch() {
+    searchModal?.classList.add('hidden');
+    document.body.style.overflow = '';
+    if (searchInput) searchInput.value = '';
+    if (searchResults) searchResults.innerHTML = '<div class="text-center py-8 text-gray-500"><p>Start typing to search posts...</p></div>';
+  }
+  
+  function searchPosts(query: string) {
+    if (!query.trim()) {
+      if (searchResults) searchResults.innerHTML = '<div class="text-center py-8 text-gray-500"><p>Start typing to search posts...</p></div>';
+      return;
+    }
+    
+    if (!fuse) {
+      console.error('Fuse.js not initialized');
+      return;
+    }
+    
+    // Use Fuse.js for advanced fuzzy search
+    const results = fuse.search(query);
+    
+    if (results.length === 0) {
+      if (searchResults) searchResults.innerHTML = '<div class="text-center py-8 text-gray-500"><p>No posts found for "' + query + '"</p></div>';
+      return;
+    }
+    
+    const resultsHTML = results.map((result: any) => {
+      const post = result.item;
+      const score = Math.round((1 - result.score) * 100);
+      
+      // Highlight matches
+      let highlightedTitle = post.title;
+      if (result.matches) {
+        result.matches.forEach((match: any) => {
+          if (match.key === 'title') {
+            match.indices.forEach(([start, end]: [number, number]) => {
+              const before = highlightedTitle.substring(0, start);
+              const highlighted = highlightedTitle.substring(start, end + 1);
+              const after = highlightedTitle.substring(end + 1);
+              highlightedTitle = before + '<mark class="bg-yellow-200 dark:bg-yellow-800">' + highlighted + '</mark>' + after;
+            });
+          }
+        });
+      }
+      
+      return `
+        <a href="/blog/${post.slug}" class="block p-4 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-xl transition-colors group">
+          <div class="flex items-center justify-between mb-1">
+            <h3 class="font-semibold text-gray-900 dark:text-white group-hover:text-primary-600">${highlightedTitle}</h3>
+            <span class="text-xs text-gray-400">${score}% match</span>
+          </div>
+          <p class="text-sm text-gray-600 dark:text-gray-400 mb-2">${post.description.substring(0, 120)}...</p>
+          <div class="flex items-center gap-2 text-xs">
+            <span class="px-2 py-1 bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300 rounded-full">${post.category}</span>
+            ${post.tags.slice(0, 2).map((tag: string) => `<span class="text-gray-500">#${tag}</span>`).join(' ')}
+          </div>
+        </a>
+      `;
+    }).join('');
+    
+    if (searchResults) searchResults.innerHTML = resultsHTML;
+  }
+  
+  // Event listeners
+  searchClose?.addEventListener('click', closeSearch);
+  searchBackdrop?.addEventListener('click', closeSearch);
+  
+  searchInput?.addEventListener('input', (e) => {
+    const target = e.target as HTMLInputElement;
+    searchPosts(target.value);
+  });
+  
+  // Keyboard shortcuts
+  document.addEventListener('keydown', (e) => {
+    if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+      e.preventDefault();
+      openSearch();
+    }
+    if (e.key === 'Escape') {
+      closeSearch();
+    }
+  });
+  
+  // Initialize
+  loadPosts();
+  
+  // Export for global use
+  (window as any).openSearch = openSearch;
+</script>

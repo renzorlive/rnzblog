@@ -1,0 +1,61 @@
+---
+// Analytics integration (Google Analytics + Plausible)
+const GA_ID = 'G-XXXXXXXXXX'; // Replace with your GA4 ID
+const PLAUSIBLE_DOMAIN = 'your-domain.com'; // Replace with your domain
+---
+
+<!-- Google Analytics (via Partytown) -->
+{GA_ID && (
+  <>
+    <script type="text/partytown" src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}></script>
+    <script type="text/partytown" define:vars={{ GA_ID }}>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', GA_ID, {
+        page_title: document.title,
+        page_location: window.location.href,
+      });
+    </script>
+  </>
+)}
+
+<!-- Plausible Analytics (Privacy-focused alternative) -->
+{PLAUSIBLE_DOMAIN && (
+  <script 
+    defer 
+    data-domain={PLAUSIBLE_DOMAIN}
+    src="https://plausible.io/js/script.js"
+    type="text/partytown"
+  ></script>
+)}
+
+<script>
+  // Custom event tracking
+  function trackEvent(eventName: string, properties?: Record<string, any>) {
+    // Google Analytics
+    if (typeof gtag !== 'undefined') {
+      gtag('event', eventName, properties);
+    }
+    
+    // Plausible
+    if (typeof plausible !== 'undefined') {
+      plausible(eventName, { props: properties });
+    }
+    
+    console.log('Event tracked:', eventName, properties);
+  }
+  
+  // Track page views for SPA navigation
+  function trackPageView(url: string) {
+    if (typeof gtag !== 'undefined') {
+      gtag('config', GA_ID, {
+        page_path: url,
+      });
+    }
+  }
+  
+  // Export for global use
+  (window as any).trackEvent = trackEvent;
+  (window as any).trackPageView = trackPageView;
+</script>

@@ -1,0 +1,93 @@
+---
+// Comments integration (Giscus - GitHub-based)
+interface Props {
+  slug: string;
+}
+
+const { slug } = Astro.props;
+
+// Giscus configuration
+const GISCUS_CONFIG = {
+  repo: 'your-username/your-repo', // Replace with your GitHub repo
+  repoId: 'YOUR_REPO_ID', // Get from https://giscus.app
+  category: 'General',
+  categoryId: 'YOUR_CATEGORY_ID', // Get from https://giscus.app
+  mapping: 'pathname',
+  strict: '0',
+  reactionsEnabled: '1',
+  emitMetadata: '0',
+  inputPosition: 'bottom',
+  theme: 'preferred_color_scheme',
+  lang: 'en'
+};
+---
+
+<div class="comments-section mt-16 pt-8 border-t border-gray-200 dark:border-gray-700">
+  <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">Comments</h3>
+  
+  <!-- Giscus Comments -->
+  <div 
+    id="giscus-container"
+    class="giscus bg-white dark:bg-gray-900 rounded-2xl p-6 shadow-glass border border-white/20 dark:border-gray-700/20"
+  ></div>
+</div>
+
+<script define:vars={{ GISCUS_CONFIG, slug }}>
+  function loadGiscus() {
+    const script = document.createElement('script');
+    script.src = 'https://giscus.app/client.js';
+    script.setAttribute('data-repo', GISCUS_CONFIG.repo);
+    script.setAttribute('data-repo-id', GISCUS_CONFIG.repoId);
+    script.setAttribute('data-category', GISCUS_CONFIG.category);
+    script.setAttribute('data-category-id', GISCUS_CONFIG.categoryId);
+    script.setAttribute('data-mapping', GISCUS_CONFIG.mapping);
+    script.setAttribute('data-strict', GISCUS_CONFIG.strict);
+    script.setAttribute('data-reactions-enabled', GISCUS_CONFIG.reactionsEnabled);
+    script.setAttribute('data-emit-metadata', GISCUS_CONFIG.emitMetadata);
+    script.setAttribute('data-input-position', GISCUS_CONFIG.inputPosition);
+    script.setAttribute('data-theme', GISCUS_CONFIG.theme);
+    script.setAttribute('data-lang', GISCUS_CONFIG.lang);
+    script.crossOrigin = 'anonymous';
+    script.async = true;
+    
+    const container = document.getElementById('giscus-container');
+    if (container) {
+      container.appendChild(script);
+    }
+  }
+  
+  // Load comments when in viewport (lazy loading)
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        loadGiscus();
+        observer.disconnect();
+      }
+    });
+  });
+  
+  const commentsSection = document.querySelector('.comments-section');
+  if (commentsSection) {
+    observer.observe(commentsSection);
+  }
+  
+  // Update theme when dark mode changes
+  function updateGiscusTheme() {
+    const isDark = document.documentElement.classList.contains('dark');
+    const theme = isDark ? 'dark' : 'light';
+    
+    const giscusFrame = document.querySelector('iframe.giscus-frame') as HTMLIFrameElement;
+    if (giscusFrame) {
+      giscusFrame.contentWindow?.postMessage({
+        giscus: { setConfig: { theme } }
+      }, 'https://giscus.app');
+    }
+  }
+  
+  // Listen for theme changes
+  const themeObserver = new MutationObserver(updateGiscusTheme);
+  themeObserver.observe(document.documentElement, {
+    attributes: true,
+    attributeFilter: ['class']
+  });
+</script>
